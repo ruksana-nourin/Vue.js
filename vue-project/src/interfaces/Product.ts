@@ -18,7 +18,7 @@ export interface Product {
 }
 export const defaultProduct: Product= {
     id:0,
-    name: '',
+    name: 'Laptop',
     price: 0,
     quantity:0,
 
