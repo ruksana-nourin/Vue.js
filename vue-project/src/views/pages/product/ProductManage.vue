@@ -4,17 +4,23 @@ import PageHead from '@/components/PageHead.vue';
 import { api, baseUrl } from '@/api.ts';
 import { ref } from 'vue';
 import type { Product } from '@/interfaces/Product';
+// import type { Brand } from '@/interfaces/Brand';
+// import type { Category } from '@/interfaces/Category';
 
 let products = ref<Product[]>([]);
 let paginationLinks = ref<any[]>([]);
-// console.log(products);
-function getAllProducts(url:string) {
+// let brands = ref<Brand[]>([]);
+// let categories = ref<Category[]>([]);
+// // console.log(products);
+
+
+function getAllProducts(url: string) {
     api.get(url)
         .then((res: any) => {
-            console.log(res.data.products);
+            // console.log(res.data.products);
             products.value = res.data.products.data;
             paginationLinks.value = res.data.products.links;
-            console.log(paginationLinks)
+            // console.log(paginationLinks)
         })
         .catch((err: any) => {
             console.log(err.response.data);
@@ -22,13 +28,14 @@ function getAllProducts(url:string) {
 }
 getAllProducts('products');
 
+
+
 </script>
 
 <template>
     <PageHead title="Product" subtitle="Manage your product from here">
         <RouterLink class="btn-solid theme-accent" to="/products-create"><i class="bi bi-plus-lg"></i> Add Product
         </RouterLink>
-
     </PageHead>
 
     <section class="section-gap">
@@ -56,10 +63,12 @@ getAllProducts('products');
                                 <td>{{ item.id }}</td>
                                 <td>
 
-                                    <div class="display-flex aligm-item-center gap-3">
-                                        <img v-if="item.image" :src="`${baseUrl}${item.image}`" width="40" height="40"
-                                            alt="">
-                                        <img v-else :src="`https://placehold.co/600x400`" width="40" height="40">
+                                    <div class="display-flex aligm-item-center gap-3 ">
+                                        <img class="rounded me-4" v-if="item.image" :src="`${baseUrl}${item.image}`"
+                                            width="60" height="60" alt="">
+                                        <img class="rounded me-4" v-else
+                                            :src="`https://robohash.org/mail@ashallendesign.co.uk`" width="60"
+                                            height="60">
                                         <strong>{{ item.name }}</strong>
                                     </div>
 
@@ -74,13 +83,15 @@ getAllProducts('products');
 
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn-solid theme-primary"><i
-                                                class="bi bi-eye-fill"></i></button>
+                                        <RouterLink type="button" :to="`/products/${item.id}`"
+                                            class="btn-solid theme-primary"><i class="bi bi-eye-fill"></i>
+                                        </RouterLink>
                                         <RouterLink type="button" to="/products-update" class="btn-solid theme-success">
                                             <i class="bi bi-pencil-fill"></i>
                                         </RouterLink>
                                         <button type="button" class="btn-solid theme-danger"><i
-                                                class="bi bi-trash3-fill"></i></button>
+                                                class="bi bi-trash3-fill"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -94,7 +105,9 @@ getAllProducts('products');
                                         <ul class="pagination pagination-sm theme-accent justify-content-end mb-0">
                                             <li v-for="link in paginationLinks" class="page-item"
                                                 :class="link.active ? 'active' : ''">
-                                                <button class="page-link" type="button" :class="link.page == null ? 'disabled' :'' " @click="getAllProducts(link.url)">
+                                                <button class="page-link" type="button"
+                                                    :class="link.page == null ? 'disabled' : ''"
+                                                    @click="getAllProducts(link.url)">
                                                     <span aria-hidden="true" v-html="link.label"></span>
                                                 </button>
                                             </li>

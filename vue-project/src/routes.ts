@@ -4,6 +4,7 @@ import ProductManage from "./views/pages/product/ProductManage.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import ProductCreate from "./views/pages/product/ProductCreate.vue";
 import ProductUpdate from "./views/pages/product/ProductUpdate.vue";
+import ProductDetails from "./views/pages/product/ProductDetails.vue";
 
 const routes=[
     { path: '/', component: Dashboard},
@@ -11,6 +12,7 @@ const routes=[
     { path: '/users-create', component: UserManage},
     { path: '/products', component: ProductManage},
     { path: '/products-create', component: ProductCreate},
+    { path: '/products/:id', component: ProductDetails},
     { path: '/products-update', component: ProductUpdate},
 ];
 export const router = createRouter({

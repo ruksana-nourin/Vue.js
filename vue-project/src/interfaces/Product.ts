@@ -7,10 +7,10 @@ export interface Product {
     image_path?: string;
 
     category_id: number;
-    category: string;
+    category: any;
 
     brand_id: number
-    brand: string;
+    brand: any;
 
     description?: string;
     reorder_level:number;

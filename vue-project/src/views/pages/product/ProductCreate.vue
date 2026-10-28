@@ -1,30 +1,73 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import PageHead from '../../../components/PageHead.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { defaultProduct } from '@/interfaces/Product.ts';
 import type { Brand } from '@/interfaces/Brand.ts';
 import type { Category } from '@/interfaces/Category.ts';
 import { api } from '@/api.ts';
+let route = useRouter();
 let product = ref(defaultProduct);
-
 let brands = ref<Brand[]>([]);
 let categories = ref<Category[]>([]);
+function getAllBrands() {
+  api.get('brands')
+    .then((res: any) => {
+      // console.log(res.data.brands)
+      brands.value = res.data.brands;
+
+    })
+    .catch((err: any) => {
+      console.log(err.response.data);
+    });
+}
+
+
+function getAllCategories() {
+  api.get('categories')
+    .then((res: any) => {
+      // console.log(res.data.categories)
+      categories.value = res.data.categories;
+    })
+    .catch((err: any) => {
+      console.log(err.response.data);
+    });
+}
+
+onMounted(() => {
+  getAllBrands();
+  getAllCategories();
+})
 function handleSubmit() {
   // console.log(product.value);
-  let data =new FormData();
+  let formdata = new FormData();
+  formdata.append('name', product.value.name);
+  formdata.append('category_id', product.value.category_id.toString());
+  formdata.append('brand_id', product.value.brand_id.toString());
+  formdata.append('price', product.value.price.toString());
+  formdata.append('quantity', product.value.quantity.toString());
+  if (product.value.reorder_level) formdata.append('reorder_level', product.value.reorder_level.toString());
+  formdata.append('description', product.value.description? product.value.description: '');
+  // formdata.append('active', product.value.active.toString());
+  // formdata.append('active', String(product.value.active));
+//   formdata.append(
+//     'active',
+//     product.value.active ? 'true' : 'false'
+// );
+formdata.append('active', product.value.active ? '1' : '0');
+  if (product.value.image) formdata.append('image', product.value.image);
 
-  if(product.value.image)data.append('image', product.value.image);
-   api.post('products', data)
-        .then((res: any) => {
-            console.log(res.data);
-        })
-        .catch((err: any) => {
-            console.log(err.response.data);
-        });
+  api.post('products', formdata, { headers: { 'Content-Type': 'multipart/formdata' } })
+    .then((res: any) => {
+      // console.log(res.data);
+      route.push('/products');
+    })
+    .catch((err: any) => {
+      console.log(err.response.data);
+    });
 }
-function handleImage(event:any){
-  product.value.image= event.target.files[0] || null;
+function handleImage(event: any) {
+  product.value.image = event.target.files[0] || null;
 }
 
 </script>
@@ -53,6 +96,8 @@ function handleImage(event:any){
                 <label class="form-label">Category</label>
                 <select class="form-control" v-model="product.category_id">
                   <option selected disabled>Select category...</option>
+                  <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option>
+
                 </select>
               </div>
             </div>
@@ -61,6 +106,7 @@ function handleImage(event:any){
                 <label class="form-label">Brand</label>
                 <select class="form-control" v-model="product.brand_id">
                   <option selected disabled>Select brand...</option>
+                  <option v-for="item in brands" :key="item.id" :value="item.id">{{ item.name }}</option>
                 </select>
               </div>
             </div>
@@ -91,7 +137,7 @@ function handleImage(event:any){
             <div class="col-6">
               <div class="form-field">
                 <label class="form-label">Image(optional)</label>
-                <input type="file" class="form-control"accept="image/*" @change="handleImage">
+                <input type="file" class="form-control" accept="image/*" @change="handleImage">
 
               </div>
             </div>
