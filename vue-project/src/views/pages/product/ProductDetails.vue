@@ -8,6 +8,7 @@ import { RouterLink, useRoute } from 'vue-router';
 const id = useRoute().params.id;
 let item = ref(defaultProduct);
 
+
 function getItem() {
     api.get(`products/${id}`)
         .then((res: any) => {

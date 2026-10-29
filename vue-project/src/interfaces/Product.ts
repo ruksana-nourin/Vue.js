@@ -3,7 +3,7 @@ export interface Product {
     name: string;
     price: number;
     quantity: number;
-    image?: File |null;
+    image?: File |null| string;
     image_path?: string;
 
     category_id: number;

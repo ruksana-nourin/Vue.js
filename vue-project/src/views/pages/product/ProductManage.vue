@@ -13,6 +13,9 @@ let paginationLinks = ref<any[]>([]);
 // let categories = ref<Category[]>([]);
 // // console.log(products);
 
+const showDeleteModal = ref(false);
+const selectedProductId = ref<number | null>(null);
+
 
 function getAllProducts(url: string) {
     api.get(url)
@@ -26,7 +29,44 @@ function getAllProducts(url: string) {
             console.log(err.response.data);
         });
 }
+
 getAllProducts('products');
+
+// function handleDelete(id: number) {
+//     api.delete(`products/${id}`)
+//         .then((res: any) => {
+//             getAllProducts('products');
+//         })
+//         .catch((err: any) => {
+//             console.log(err.response.data);
+//         });
+// }
+
+// Open confirmation modal
+function openDeleteModal(id: number) {
+    selectedProductId.value = id;
+    showDeleteModal.value = true;
+}
+
+// Close confirmation modal
+function closeDeleteModal() {
+    showDeleteModal.value = false;
+    selectedProductId.value = null;
+}
+
+// Delete after confirmation
+function confirmDelete() {
+    if (selectedProductId.value === null) return;
+
+    api.delete(`products/${selectedProductId.value}`)
+        .then(() => {
+            closeDeleteModal();
+            getAllProducts('products');
+        })
+        .catch((err: any) => {
+            console.log(err.response?.data ?? err);
+        });
+}
 
 
 
@@ -86,11 +126,17 @@ getAllProducts('products');
                                         <RouterLink type="button" :to="`/products/${item.id}`"
                                             class="btn-solid theme-primary"><i class="bi bi-eye-fill"></i>
                                         </RouterLink>
-                                        <RouterLink type="button" to="/products-update" class="btn-solid theme-success">
+                                        <RouterLink type="button" :to="`/products-update/${item.id}`" class="btn-solid theme-success">
                                             <i class="bi bi-pencil-fill"></i>
                                         </RouterLink>
-                                        <button type="button" class="btn-solid theme-danger"><i
+                                        <!-- <button type="button" @click="handleDelete(item.id)"
+                                            data-bs-target="#exampleDialog" class="btn-solid theme-danger"><i
                                                 class="bi bi-trash3-fill"></i>
+                                        </button> -->
+
+                                        <button type="button" @click="openDeleteModal(item.id)"
+                                            class="btn-solid theme-danger">
+                                            <i class="bi bi-trash3-fill"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -121,4 +167,80 @@ getAllProducts('products');
             </div>
         </div>
     </section>
+
+
+
+
+    <dialog class="dialog" :open="showDeleteModal" @click.self="closeDeleteModal">
+        <div class="dialog-header">
+            <h5 class="dialog-title">Confirm Delete</h5>
+
+            <button type="button" class="btn-close" aria-label="Close" @click="closeDeleteModal"></button>
+        </div>
+
+        <div class="dialog-body">
+            <p>
+                Are you sure you want to delete this product?
+                This action cannot be undone.
+            </p>
+        </div>
+
+        <div class="dialog-footer">
+            <button type="button" class="btn-solid theme-secondary" @click="closeDeleteModal">
+                Cancel
+            </button>
+
+            <button type="button" class="btn-solid theme-danger" @click="confirmDelete">
+                <i class="bi bi-trash3-fill"></i>
+                Confirm Delete
+            </button>
+        </div>
+    </dialog>
+
 </template>
+<style>
+.dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    margin: 0;
+    width: 90%;
+    max-width: 450px;
+
+    border: none;
+    border-radius: 12px;
+    padding: 0;
+
+    background: white;
+    color: #333;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Dark background behind the modal */
+.dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal content spacing */
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+    padding: 16px 20px;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #eee;
+}
+</style>

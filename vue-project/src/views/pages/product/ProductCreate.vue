@@ -47,14 +47,14 @@ function handleSubmit() {
   formdata.append('price', product.value.price.toString());
   formdata.append('quantity', product.value.quantity.toString());
   if (product.value.reorder_level) formdata.append('reorder_level', product.value.reorder_level.toString());
-  formdata.append('description', product.value.description? product.value.description: '');
+  formdata.append('description', product.value.description ? product.value.description : '');
   // formdata.append('active', product.value.active.toString());
   // formdata.append('active', String(product.value.active));
-//   formdata.append(
-//     'active',
-//     product.value.active ? 'true' : 'false'
-// );
-formdata.append('active', product.value.active ? '1' : '0');
+  //   formdata.append(
+  //     'active',
+  //     product.value.active ? 'true' : 'false'
+  // );
+  formdata.append('active', product.value.active ? '1' : '0');
   if (product.value.image) formdata.append('image', product.value.image);
 
   api.post('products', formdata, { headers: { 'Content-Type': 'multipart/formdata' } })

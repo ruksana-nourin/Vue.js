@@ -13,7 +13,7 @@ const routes=[
     { path: '/products', component: ProductManage},
     { path: '/products-create', component: ProductCreate},
     { path: '/products/:id', component: ProductDetails},
-    { path: '/products-update', component: ProductUpdate},
+    { path: '/products-update/:id', component: ProductUpdate},
 ];
 export const router = createRouter({
     history: createWebHistory(),
