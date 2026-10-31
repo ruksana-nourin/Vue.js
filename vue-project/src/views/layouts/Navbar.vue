@@ -1,3 +1,9 @@
+<script  setup lang="ts">
+import { useCounterstate } from '@/store/count';
+
+const counter = useCounterstate();
+</script>
+
 <template>
     <header class="navbar topbar bg-1 border-bottom">
       <button class="btn-icon menu-toggle" type="button" data-bs-toggle="drawer" data-bs-target="#mobileSidebar"
@@ -5,6 +11,9 @@
         <i class="bi bi-list fs-xl"></i>
       </button>
       <span class="topbar-title">Dashboard</span>
+
+      <span class="topbar-title badge bg-accent">Count: {{ counter.count }}</span>
+      <span class="topbar-title badge bg-primary">ID: {{ counter.id }}</span>
 
       <div class="topbar-right">
         <!-- Bootstrap Toggler plugin: <html> এর data-bs-theme অ্যাট্রিবিউট অন/অফ করে -->
