@@ -1,7 +1,24 @@
 <script  setup lang="ts">
+import { api } from '@/api';
 import { useCounterstate } from '@/store/count';
+import { useRouter } from 'vue-router';
 
+const route = useRouter();
 const counter = useCounterstate();
+const handleLogout = () => {
+  api.post('/logout')
+    .then((response) => {
+      console.log(response.data);
+      localStorage.removeItem('vuetoken');
+      route.push('/login');
+    }).catch((error) => {
+      console.log(error.response.data);
+      // if (error.response.data) {
+      //   localStorage.removeItem('vuetoken');
+      //   route.push('/login');
+      // }
+    });
+};
 </script>
 
 <template>
@@ -32,7 +49,7 @@ const counter = useCounterstate();
             <a class="menu-item" href="#">Profile</a>
             <a class="menu-item" href="#">Settings</a>
             <div class="menu-divider"></div>
-            <a class="menu-item" href="#">Logout</a>
+            <button class="menu-item" @click="handleLogout">Logout</button>
           </div>
         </div>
       </div>
